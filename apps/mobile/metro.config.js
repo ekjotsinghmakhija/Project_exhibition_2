@@ -1,4 +1,5 @@
 const { getDefaultConfig } = require('expo/metro-config');
+const { withNativeWind } = require('nativewind/metro');
 const path = require('path');
 
 const projectRoot = __dirname;
@@ -18,4 +19,5 @@ config.resolver.nodeModulesPaths = [
 // 3. Force Metro to resolve dependencies exclusively from the paths above
 config.resolver.disableHierarchicalLookup = true;
 
-module.exports = config;
+// Wrap the config with NativeWind
+module.exports = withNativeWind(config, { input: './global.css' });
