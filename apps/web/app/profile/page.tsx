@@ -27,7 +27,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { UserCircle } from "lucide-react";
 
 export default function ProfilePage() {
-  // 1. Define your form using the Shared Zod Schema.
   const form = useForm<PatientProfile>({
     resolver: zodResolver(PatientProfileSchema),
     defaultValues: {
@@ -38,9 +37,7 @@ export default function ProfilePage() {
     },
   });
 
-  // 2. Define a submit handler.
   function onSubmit(values: PatientProfile) {
-    // In the future, this will send data to the Go Backend and WatermelonDB
     console.log("Securely saved profile:", values);
     alert("Profile saved successfully! Check console for payload.");
   }
@@ -74,7 +71,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="John Doe" {...field} />
+                        <Input placeholder="Ekjot Singh" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
