@@ -1,13 +1,14 @@
 {
   "name": "sanjeevani-monorepo",
   "private": true,
+  "packageManager": "bun@1.1.0",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
+    "dev": "turbo run dev",
     "lint": "turbo run lint"
   },
   "devDependencies": {
