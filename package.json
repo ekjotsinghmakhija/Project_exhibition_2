@@ -10,8 +10,6 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:web": "turbo run dev --filter=web",
-    "dev:mobile": "turbo run dev --filter=mobile",
-    "dev:mobile:clean": "turbo run dev --filter=mobile -- --clear",
     "lint": "turbo run lint"
   },
   "devDependencies": {

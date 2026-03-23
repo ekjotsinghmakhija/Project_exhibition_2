@@ -1,185 +1,161 @@
-"use client";
+"use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
-import { HeartPulse, Wind, Droplet, Activity, AlertOctagon } from "lucide-react";
+import React, { useState } from 'react'
+import SlideToSOS from '@/components/SlideToSOS'
+import {
+  HeartPulse, Wind, Droplets, Skull, Zap, Activity,
+  ShieldAlert, MapPin, Clock, Info, ShieldCheck
+} from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { motion } from 'framer-motion'
+import { cn } from '@/lib/utils'
 
-// The Offline-Capable Deterministic Decision Tree
-const protocols = {
-  cardiac: [
-    {
-      id: "cpr",
-      title: "Hands-Only CPR (Adult)",
-      critical: true,
-      steps: [
-        "1. CHECK: Ensure the scene is safe. Tap the person's shoulder and shout, 'Are you okay?'",
-        "2. CALL: If no response, point to a specific Warrior/Bystander and say, 'Call an ambulance!'",
-        "3. POSITION: Place the person flat on their back on a firm surface.",
-        "4. HANDS: Put the heel of one hand in the center of their chest. Put your other hand on top and interlace your fingers.",
-        "5. PUSH: Push hard and fast (at least 2 inches deep) at a rate of 100-120 beats per minute (to the beat of 'Stayin' Alive').",
-        "6. CONTINUE: Do not stop until medical help takes over or the person breathes/moves."
-      ]
-    },
-    {
-      id: "heart-attack",
-      title: "Suspected Heart Attack",
-      critical: false,
-      steps: [
-        "1. REST: Have the person sit down, rest, and try to keep calm.",
-        "2. LOOSEN: Loosen any tight clothing around their neck or chest.",
-        "3. MEDICATION: Ask if they take chest pain medication (like nitroglycerin). Help them take it.",
-        "4. ASPIRIN: If they are not allergic, have them chew and swallow one adult aspirin (325mg).",
-        "5. MONITOR: Stay with them and monitor breathing until the Warrior fleet arrives."
-      ]
-    }
-  ],
-  breathing: [
-    {
-      id: "choking",
-      title: "Choking (Heimlich Maneuver)",
-      critical: true,
-      steps: [
-        "1. VERIFY: Ask, 'Are you choking?' If they cannot cough, speak, or breathe, act immediately.",
-        "2. STAND: Stand behind the person. Place one foot slightly in front of the other for balance.",
-        "3. ARMS: Wrap your arms around their waist. Tip them forward slightly.",
-        "4. FIST: Make a fist with one hand. Place it slightly above their navel (belly button).",
-        "5. GRASP: Grasp the fist with your other hand.",
-        "6. THRUST: Press hard into the abdomen with a quick, upward thrust. Repeat until the object is expelled."
-      ]
-    }
-  ],
-  trauma: [
-    {
-      id: "bleeding",
-      title: "Severe Bleeding (Hemorrhage)",
-      critical: true,
-      steps: [
-        "1. PROTECT: Put on medical gloves if available.",
-        "2. EXPOSE: Remove or cut clothing to find the source of the bleeding.",
-        "3. PRESSURE: Apply direct, continuous pressure to the wound with a clean cloth or sterile dressing.",
-        "4. MAINTAIN: Do not remove the cloth. If blood soaks through, add more cloth on top and push harder.",
-        "5. TOURNIQUET: If the bleeding is from an arm or leg and will not stop, apply a tourniquet 2-3 inches above the wound (never on a joint). Note the exact time it was applied."
-      ]
-    }
-  ]
-};
+const symptoms = [
+  { id: 'heart', label: 'Chest Pain', icon: HeartPulse, color: 'text-red-500', bg: 'bg-red-500/10' },
+  { id: 'breathing', label: 'Breathing', icon: Wind, color: 'text-blue-400', bg: 'bg-blue-400/10' },
+  { id: 'bleeding', label: 'Bleeding', icon: Droplets, color: 'text-rose-600', bg: 'bg-rose-600/10' },
+  { id: 'unconscious', label: 'Unconscious', icon: Skull, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+  { id: 'trauma', label: 'Trauma', icon: Zap, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+  { id: 'other', label: 'Other', icon: Activity, color: 'text-slate-400', bg: 'bg-slate-500/10' },
+]
 
 export default function FirstAidPage() {
+  const [selectedSymptom, setSelectedSymptom] = useState<string | null>(null)
+
+  const handleSOS = () => {
+    // API Call to trigger emergency logic
+    console.log("Emergency triggered:", { symptom: selectedSymptom, timestamp: new Date() })
+  }
+
   return (
-    <div className="flex-1 p-4 md:p-8 pt-6 max-w-4xl mx-auto w-full">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="bg-red-600 p-2 rounded-lg">
-          <AlertOctagon className="w-8 h-8 text-white" />
-        </div>
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">First Aid Protocols</h2>
-          <p className="text-muted-foreground font-mono text-sm uppercase mt-1">
-            <Badge variant="outline" className="text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10 mr-2">
-              Offline Available
-            </Badge>
-            Deterministic Emergency Trees
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#020617] text-slate-50 selection:bg-red-500/30">
+      {/* Subtle Background Glow */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-red-900/10 blur-[120px] rounded-full" />
+        <div className="absolute top-[20%] -right-[5%] w-[30%] h-[30%] bg-blue-900/10 blur-[120px] rounded-full" />
       </div>
 
-      <Card className="border-border/50 shadow-sm">
-        <CardHeader className="bg-muted/30 border-b border-border pb-6">
-          <CardTitle>Clinical Guidelines</CardTitle>
-          <CardDescription>Follow these step-by-step instructions carefully until professional medical responders arrive on the scene.</CardDescription>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Tabs defaultValue="cardiac" className="w-full">
-            <div className="p-4 md:px-6 border-b border-border overflow-x-auto">
-              <TabsList className="w-full justify-start h-12 bg-muted/50">
-                <TabsTrigger value="cardiac" className="flex items-center gap-2 text-sm">
-                  <HeartPulse className="w-4 h-4 text-red-500" /> Cardiac
-                </TabsTrigger>
-                <TabsTrigger value="breathing" className="flex items-center gap-2 text-sm">
-                  <Wind className="w-4 h-4 text-blue-500" /> Breathing
-                </TabsTrigger>
-                <TabsTrigger value="trauma" className="flex items-center gap-2 text-sm">
-                  <Droplet className="w-4 h-4 text-rose-500" /> Trauma & Bleeding
-                </TabsTrigger>
-              </TabsList>
+      <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-8 lg:p-12 space-y-10">
+        {/* Header with System Status */}
+        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-800 pb-8">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full w-fit">
+              <span className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-red-500">Live Emergency Link</span>
+            </div>
+            <h1 className="text-5xl font-black tracking-tighter italic">
+              SANJEEVANI <span className="text-red-600">CORE</span>
+            </h1>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="text-right">
+              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Active Responders</div>
+              <div className="text-xl font-black font-mono">14 NEARBY</div>
+            </div>
+            <div className="w-[1px] bg-slate-800 h-10" />
+            <div className="text-right">
+              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">ETA (Avg)</div>
+              <div className="text-xl font-black font-mono text-emerald-500">2.4 MIN</div>
+            </div>
+          </div>
+        </header>
+
+        {/* SOS Action Section */}
+        <section className="relative group">
+          <div className="absolute inset-0 bg-red-600/5 blur-2xl group-hover:bg-red-600/10 transition-colors" />
+          <div className="relative flex flex-col items-center justify-center space-y-8 py-14 rounded-[2rem] bg-slate-900/40 border border-slate-800 backdrop-blur-xl shadow-2xl">
+            <div className="text-center space-y-3 px-6">
+              <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Immediate Action Required?</h2>
+              <p className="text-slate-400 text-sm max-w-sm mx-auto font-medium">
+                Once triggered, your precise medical profile and GPS coordinates are sent to local authorities and verified doctors.
+              </p>
             </div>
 
-            {/* Cardiac Tab */}
-            <TabsContent value="cardiac" className="p-0 m-0">
-              <Accordion type="single" collapsible className="w-full">
-                {protocols.cardiac.map((protocol) => (
-                  <AccordionItem value={protocol.id} key={protocol.id} className="border-b-0 border-t first:border-t-0 px-4 md:px-6">
-                    <AccordionTrigger className="hover:no-underline py-6">
-                      <div className="flex items-center gap-3 text-left">
-                        {protocol.title}
-                        {protocol.critical && <Badge variant="destructive" className="ml-2">CRITICAL</Badge>}
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="text-base text-muted-foreground leading-relaxed pb-6 space-y-4">
-                      {protocol.steps.map((step, idx) => (
-                        <div key={idx} className="flex gap-3 bg-muted/20 p-3 rounded-md border border-border/50">
-                          <span className="font-bold text-foreground">{step.split(':')[0]}:</span>
-                          <span>{step.split(':')[1] || step}</span>
-                        </div>
-                      ))}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </TabsContent>
+            <SlideToSOS onConfirm={handleSOS} />
 
-            {/* Breathing Tab */}
-            <TabsContent value="breathing" className="p-0 m-0">
-              <Accordion type="single" collapsible className="w-full">
-                {protocols.breathing.map((protocol) => (
-                  <AccordionItem value={protocol.id} key={protocol.id} className="border-b-0 border-t first:border-t-0 px-4 md:px-6">
-                    <AccordionTrigger className="hover:no-underline py-6">
-                      <div className="flex items-center gap-3 text-left">
-                        {protocol.title}
-                        {protocol.critical && <Badge variant="destructive" className="ml-2">CRITICAL</Badge>}
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="text-base text-muted-foreground leading-relaxed pb-6 space-y-4">
-                      {protocol.steps.map((step, idx) => (
-                        <div key={idx} className="flex gap-3 bg-muted/20 p-3 rounded-md border border-border/50">
-                          <span className="font-bold text-foreground">{step.split(':')[0]}:</span>
-                          <span>{step.split(':')[1] || step}</span>
-                        </div>
-                      ))}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </TabsContent>
+            <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">
+              <span className="flex items-center gap-2"><MapPin className="w-3 h-3 text-red-500" /> AES-256 GPS</span>
+              <span className="flex items-center gap-2"><ShieldCheck className="w-3 h-3 text-red-500" /> VERIFIED LINK</span>
+              <span className="flex items-center gap-2"><Clock className="w-3 h-3 text-red-500" /> REAL-TIME SYNC</span>
+            </div>
+          </div>
+        </section>
 
-            {/* Trauma Tab */}
-            <TabsContent value="trauma" className="p-0 m-0">
-              <Accordion type="single" collapsible className="w-full">
-                {protocols.trauma.map((protocol) => (
-                  <AccordionItem value={protocol.id} key={protocol.id} className="border-b-0 border-t first:border-t-0 px-4 md:px-6">
-                    <AccordionTrigger className="hover:no-underline py-6">
-                      <div className="flex items-center gap-3 text-left">
-                        {protocol.title}
-                        {protocol.critical && <Badge variant="destructive" className="ml-2">CRITICAL</Badge>}
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="text-base text-muted-foreground leading-relaxed pb-6 space-y-4">
-                      {protocol.steps.map((step, idx) => (
-                        <div key={idx} className="flex gap-3 bg-muted/20 p-3 rounded-md border border-border/50">
-                          <span className="font-bold text-foreground">{step.split(':')[0]}:</span>
-                          <span>{step.split(':')[1] || step}</span>
-                        </div>
-                      ))}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </TabsContent>
+        {/* Symptom Selection Grid */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between border-l-4 border-red-600 pl-4">
+            <div>
+              <h3 className="text-xl font-black uppercase tracking-tight italic">Identify Crisis Type</h3>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Refines responder toolkit preparation</p>
+            </div>
+          </div>
 
-          </Tabs>
-        </CardContent>
-      </Card>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            {symptoms.map((s, idx) => (
+              <motion.div
+                key={s.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.05 }}
+                whileHover={{ y: -4 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Card
+                  onClick={() => setSelectedSymptom(s.id)}
+                  className={cn(
+                    "h-full cursor-pointer border-slate-800 bg-slate-900/60 hover:border-red-600 transition-all group relative overflow-hidden",
+                    selectedSymptom === s.id ? "border-red-600 bg-red-600/10 ring-1 ring-red-600/50" : ""
+                  )}
+                >
+                  <CardContent className="p-4 flex flex-col items-center justify-center text-center gap-4">
+                    <div className={cn(
+                      "p-3 rounded-2xl transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]",
+                      s.bg,
+                      selectedSymptom === s.id ? "scale-110 shadow-lg" : ""
+                    )}>
+                      <s.icon className={cn("w-6 h-6", s.color)} />
+                    </div>
+                    <span className="font-black text-[11px] uppercase tracking-wider">{s.label}</span>
+
+                    {selectedSymptom === s.id && (
+                      <motion.div
+                        layoutId="active-tick"
+                        className="absolute top-2 right-2"
+                      >
+                        <div className="w-1.5 h-1.5 bg-red-600 rounded-full" />
+                      </motion.div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* Dynamic Protocol Preview */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-6 rounded-3xl bg-slate-900/40 border border-slate-800 flex items-start gap-5 hover:bg-slate-900/60 transition-colors">
+            <div className="p-4 bg-emerald-500/10 rounded-2xl shrink-0">
+              <ShieldAlert className="w-7 h-7 text-emerald-500" />
+            </div>
+            <div className="space-y-1">
+              <h4 className="font-black uppercase tracking-tight italic">Nearby Medical Support</h4>
+              <p className="text-sm text-slate-400 font-medium">12 Medical Professionals and 2 Ambulances are currently tracking your zone.</p>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-3xl bg-slate-900/40 border border-slate-800 flex items-start gap-5 hover:bg-slate-900/60 transition-colors">
+            <div className="p-4 bg-blue-500/10 rounded-2xl shrink-0">
+              <Info className="w-7 h-7 text-blue-500" />
+            </div>
+            <div className="space-y-1">
+              <h4 className="font-black uppercase tracking-tight italic">CPR & Basic Life Support</h4>
+              <p className="text-sm text-slate-400 font-medium">Wait for a responder? Follow our interactive first-aid guide to stabilize the patient.</p>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
-  );
+  )
 }
